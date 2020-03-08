@@ -42,10 +42,23 @@ class Player:
                 line = line.split(",")
                 if line[2] == self._currency:
                     self._money = self._money - 100 * float(line[1])
+                    if self._money < 0:
+                        self._money = 0
                     return
+
+    def work (self):
+        with open ("payoff.txt") as file:
+            for line in file:
+                line = line.strip()
+                line = line.split(",")
+                if line[0] == self._location:
+                    material = random.randint(int(line[1]),int(line[2]))
+                    return material
+
+    def addBananas(self,adding):
+        self._bananas += adding
                     
     
-
 def mainMenu():
     print('')
     print("Welcome to Banana farming.\n")
@@ -110,15 +123,15 @@ def travelMenu(player):
     choice = input("Make your choice (enter a country EXACTLY as it appears): ")
 
     if choice in locations and choice != player.location():
-        travel(player,choice,player.location())
+        travel(player,choice)
     elif choice == "0":
         return
     else:
         print(f'{choice} was not an option.')
     travelMenu(player)
 
-def travel(player,destination,current):
-    chance = player.relocate(destination,current)
+def travel(player,destination):
+    chance = player.relocate(destination,player.location())
 
     if chance == True:
         luck = random.randint(1,2)
@@ -132,8 +145,13 @@ def travel(player,destination,current):
     return
 
 
-def work():
-    pass
+def work(player):
+    workload = player.work()
+    player.addBananas(workload)
+
+    print(f'You successfully farmed {workload} bananas today. You now have {player.bananas()} bananas.\n')
+    input("Press any key to continue.")
+    return
 
 def exchangeBananaMenu():
     pass

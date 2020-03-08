@@ -1,0 +1,9 @@
+Russia,20,50
+United States,40,70
+Belgium,80,120
+Guatemala,100,150
+Philippines,120,170
+Ecuador,140,190
+
+
+
