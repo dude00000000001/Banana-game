@@ -6,7 +6,6 @@ class Player:
         self._name = name
         self._bananas = 10
         self._money = 500
-        self._workers = []
         self._location = "United States"
         self._currency = "USD"
 
@@ -17,10 +16,7 @@ class Player:
         return self._bananas
 
     def money (self):
-        return self._money
-
-    def workers (self):
-        return self._workers
+        return f'{self._money:.2f}'
 
     def location (self):
         return self._location
@@ -34,9 +30,20 @@ class Player:
                 line = line.strip()
                 line = line.split(",")
                 if country in line and current in line:
+                    self._location = country
                     if line[2] == "(water)":
                         return True
                     return False
+
+    def turbulence (self):
+        with open ("currency.txt") as file:
+            for line in file:
+                line = line.strip()
+                line = line.split(",")
+                if line[2] == self._currency:
+                    self._money = self._money - 100 * float(line[1])
+                    return
+                    
     
 
 def mainMenu():
@@ -67,25 +74,22 @@ def gameMenu(player):
     print(f'{player.name()}, you are in {player.location()}, have {player.bananas()} bananas, and have {player.money()} {player.currency()}.\n')
 
     print("Travel [1]")
-    print("Manage workers [2]")
-    print("Farm bananas [3]")
-    print("Exchange money for bananas [4]")
-    print("Exchange currency [5]")
-    print("Quit [6]\n")
+    print("Farm bananas [2]")
+    print("Exchange money for bananas [3]")
+    print("Exchange currency [4]")
+    print("Quit [5]\n")
 
     choice = input("Make your choice: ")
 
     if choice == "1":
         travelMenu(player)
     elif choice == "2":
-        workerMenu(player)
-    elif choice == "3":
         work(player)
-    elif choice == "4":
+    elif choice == "3":
         exchangeBananaMenu(player)
-    elif choice == "5":
+    elif choice == "4":
         exchangeCurrencyMenu(player)
-    elif choice == "6":
+    elif choice == "5":
         return
     else:
         print(f'{choice} was not an option.')
@@ -116,11 +120,17 @@ def travelMenu(player):
 def travel(player,destination,current):
     chance = player.relocate(destination,current)
 
-    print(chance)
+    if chance == True:
+        luck = random.randint(1,2)
+    else:
+        luck = 2
 
-    
-def workerMenu():
-    pass
+    if luck == 1:
+        player.turbulence()
+        print(f'On your way to {player.location()}, you experienced turbulence that slowed down your travel. You lost 100 USD for arriving late, and now have {player.money()} {player.currency()}.')
+    input(f'You have arrived in {player.location()}. Press any key to continue.')
+    return
+
 
 def work():
     pass
@@ -133,5 +143,3 @@ def exchangeCurrencyMenu():
 
     
 mainMenu()
-
-        

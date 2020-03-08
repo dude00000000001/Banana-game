@@ -1,6 +1,6 @@
-United States, 1, USD
-Ecuador, 1, USD
-Guatemala, 7.66088, GTQ
-Philippines, 50.57, PHP
-Russia, 68.56, RUB
-Belgium, 0.89, Euro
+United States,1,USD
+Ecuador,1,USD
+Guatemala,7.66088,GTQ
+Philippines,50.57,PHP
+Russia,68.56,RUB
+Belgium,0.89,Euro
