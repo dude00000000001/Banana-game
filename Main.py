@@ -1,3 +1,5 @@
+import random
+
 class Player:
 
     def __init__(self,name):
@@ -25,9 +27,20 @@ class Player:
 
     def currency(self):
         return self._currency
+
+    def relocate(self,country,current):
+        with open("travel.txt") as file:
+            for line in file:
+                line = line.strip()
+                line = line.split(",")
+                if country in line and current in line:
+                    if line[2] == "(water)":
+                        return True
+                    return False
     
 
 def mainMenu():
+    print('')
     print("Welcome to Banana farming.\n")
     print("Start [1]")
     print("Exit [2]\n")
@@ -39,7 +52,7 @@ def mainMenu():
     elif choice == "2":
         return
     else:
-        print(f'{choice} was not an option. \n')
+        print(f'{choice} was not an option.')
         mainMenu()
 
 def namePick():
@@ -47,6 +60,7 @@ def namePick():
     name = input("Please enter your name before you get started: ")
     player = Player(name)
     gameMenu(player)
+    return
 
 def gameMenu(player):
     print('')
@@ -62,24 +76,49 @@ def gameMenu(player):
     choice = input("Make your choice: ")
 
     if choice == "1":
-        travelMenu()
+        travelMenu(player)
     elif choice == "2":
-        workerMenu()
+        workerMenu(player)
     elif choice == "3":
-        work()
+        work(player)
     elif choice == "4":
-        exchangeBananaMenu()
+        exchangeBananaMenu(player)
     elif choice == "5":
-        exchangeCurrencyMenu()
+        exchangeCurrencyMenu(player)
     elif choice == "6":
-        exit
+        return
     else:
-        print(f'{choice} was not an option. \n')
-        mainMenu()
+        print(f'{choice} was not an option.')
+    gameMenu(player)
 
-def travelMenu():
-    pass
+def travelMenu(player):
+    locations = ["United States", "Ecuador", "Russia", "Philippines", "Guatemala", "Belgium"]
 
+    print('')
+    print("Please select a country to travel to.\n")
+
+    for i in range (len(locations)):
+        if locations[i] != player.location():
+            print(f'{locations[i]}')
+    
+    print("\nExit [0]\n")
+
+    choice = input("Make your choice (enter a country EXACTLY as it appears): ")
+
+    if choice in locations and choice != player.location():
+        travel(player,choice,player.location())
+    elif choice == "0":
+        return
+    else:
+        print(f'{choice} was not an option.')
+    travelMenu(player)
+
+def travel(player,destination,current):
+    chance = player.relocate(destination,current)
+
+    print(chance)
+
+    
 def workerMenu():
     pass
 
