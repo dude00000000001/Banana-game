@@ -16,7 +16,7 @@ class Player:
         return self._bananas
 
     def money (self):
-        return f'{self._money:.2f}'
+        return float(f'{self._money:.2f}')
 
     def location (self):
         return self._location
@@ -77,6 +77,21 @@ class Player:
         moneyLoss = bananas * cost
         self._bananas += bananas
         self._money -= moneyLoss
+
+    def currencyConvert(self,newCurrency):
+        with open ("currency.txt") as file:
+            for line in file:
+                line = line.strip()
+                line = line.split(",")
+                if line[2] == self._currency:
+                    num1 = float(line[1])
+                elif line[2] == newCurrency:
+                    num2 = float(line[1])
+
+        factor = num2/num1
+        newMoney = self._money * 0.9 * factor
+        self._money = float(f'{newMoney:.2f}')
+        self._currency = newCurrency
                     
     
 def mainMenu():
@@ -240,15 +255,37 @@ def moneyToBanana(player):
         print("Negative bananas do not exist, dingus.")
     elif amount == 0:
         print("Why would you want to buy no bananas? This costs you nothing.")
-    elif float(amount * bananaPrice) > float(player.money()):
+    elif (amount * bananaPrice) > (player.money()):
         print(f'You need {amount * bananaPrice:.2f} {player.currency()} to make this purchase. You have {player.money()} {player.currency()}.')
     else:
         player.moneyToBananas(amount,bananaPrice)
         print("Conversion successful!")
     return
 
-def exchangeCurrencyMenu():
-    pass
+def exchangeCurrencyMenu(player):
+    currencies = ["USD","GTQ","PHP","RUB","Euro"]
+    print(f'You have {player.money()} {player.currency()}. Converting to a currency will cost you a fee of {(player.money()/10):.2f} {player.currency()}.\n')
+    print("Please select a currency to convert to\n")
+    
+    print("USD (used in United States and Ecuador)")
+    print("GTQ (used in Guatemala)")
+    print("PHP (used in Philippines)")
+    print("RUB (used in Russia)")
+    print("Euro (used in Belgium)\n")
 
+    print("Exit [0]\n")
+
+    choice = input("Make your choice: ")
+
+    if choice == player.currency():
+        print("You are already in this currency. No fee was charged.")
+    elif choice in currencies:
+        player.currencyConvert(choice)
+        print("Conversion successful!")
+    elif choice == "0":
+        return
+    else:
+        print(f'{choice} was not an option.')
+    exchangeCurrencyMenu(player)
     
 mainMenu()
