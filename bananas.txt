@@ -1,0 +1,6 @@
+United States,0.57
+Ecuador,0.47
+Guatemala,3.03
+Russia,30.41
+Philippines,31.24
+Belgium,0.83

@@ -5,7 +5,7 @@ class Player:
     def __init__(self,name):
         self._name = name
         self._bananas = 10
-        self._money = 500
+        self._money = 200
         self._location = "United States"
         self._currency = "USD"
 
@@ -57,6 +57,26 @@ class Player:
 
     def addBananas(self,adding):
         self._bananas += adding
+
+    def currencyCheck(self):
+        with open ("currency.txt") as file:
+            for line in file:
+                line = line.strip()
+                line = line.split(",")
+                if line[0] == self._location:
+                    if self._currency == line[2]:
+                        return True
+                    return False
+
+    def bananasToMoney(self,bananas,cost):
+        moneyGain = bananas * cost
+        self._bananas -= bananas
+        self._money += moneyGain
+
+    def moneyToBananas(self,bananas,cost):
+        moneyLoss = bananas * cost
+        self._bananas += bananas
+        self._money -= moneyLoss
                     
     
 def mainMenu():
@@ -140,7 +160,7 @@ def travel(player,destination):
 
     if luck == 1:
         player.turbulence()
-        print(f'On your way to {player.location()}, you experienced turbulence that slowed down your travel. You lost 100 USD for arriving late, and now have {player.money()} {player.currency()}.')
+        print(f'On your way to {player.location()}, you experienced turbulence that slowed down your travel. You lost 100 USD for arriving late, and now have {player.money()} {player.currency()}. If you did not have that much, you lost all your money.')
     input(f'You have arrived in {player.location()}. Press any key to continue.')
     return
 
@@ -153,8 +173,79 @@ def work(player):
     input("Press any key to continue.")
     return
 
-def exchangeBananaMenu():
-    pass
+def exchangeBananaMenu(player):
+    correct = player.currencyCheck()
+    if correct == True:
+        print(f'{player.name()}, what type of exchange would you like to do?\n')
+
+        print("Bananas -> Money [1]")
+        print("Money -> Bananas [2]")
+        print("Exit [3]\n")
+
+        choice = input("Make your choice: ")
+
+        if choice == "1":
+            bananaToMoney(player)
+        elif choice == "2":
+            moneyToBanana(player)
+        elif choice == "3":
+            return
+        else:
+            print(f'{choice} was not an option.')
+        exchangeBananaMenu(player)
+    else:
+        print(f'Your money is not in the correct currency for {player.location()}. Please visit the currency exchange menu.')
+    return
+    
+def bananaToMoney(player):
+    bananaPrice = costOfBanana(player.location())
+    print(f'You have {player.bananas()} bananas and {player.money()} {player.currency()}. One banana will give you {bananaPrice} {player.currency()}.\n')
+
+    try:
+        amount = int(input("How many bananas would you like to sell: "))
+    except ValueError:
+        print("That is not a valid integer for bananas.")
+        return
+
+    if amount > player.bananas():
+        print(f'You do not have {amount} bananas.\n')
+    elif amount < 0:
+        print("Negative bananas do not exist, dingus.")
+    elif amount == 0:
+        print("Why would you want to exchange no bananas? You get nothing in return.")
+    else:
+        player.bananasToMoney(amount,bananaPrice)
+        print("Conversion successful!")
+    return
+
+def costOfBanana(country):
+    with open("bananas.txt") as file:
+        for line in file:
+            line = line.strip()
+            line = line.split(",")
+            if line[0] == country:
+                return float(line[1])
+
+def moneyToBanana(player):
+    bananaPrice = costOfBanana(player.location())
+    print(f'You have {player.bananas()} bananas and {player.money()} {player.currency()}. One banana will cost you {bananaPrice} {player.currency()}.\n')
+
+    try:
+        amount = int(input("How many bananas would you like to buy: "))
+    except ValueError:
+        print("That is not a valid integer for bananas.")
+        return
+
+    if amount < 0:
+        print("Negative bananas do not exist, dingus.")
+    elif amount == 0:
+        print("Why would you want to buy no bananas? This costs you nothing.")
+    elif float(amount * bananaPrice) > float(player.money()):
+        print(f'You need {amount * bananaPrice:.2f} {player.currency()} to make this purchase. You have {player.money()} {player.currency()}.')
+    else:
+        player.moneyToBananas(amount,bananaPrice)
+        print("Conversion successful!")
+    return
 
 def exchangeCurrencyMenu():
     pass
