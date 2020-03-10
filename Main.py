@@ -108,7 +108,7 @@ def mainMenu():
         return
     else:
         print(f'{choice} was not an option.')
-        mainMenu()
+    mainMenu()
 
 def namePick():
     print('')
